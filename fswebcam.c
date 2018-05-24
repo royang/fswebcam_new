@@ -439,18 +439,26 @@ gdImage* fswc_gdImageDuplicate(gdImage* src)
 int fswc_output(fswebcam_config_t *config, char *name, gdImage *image)
 {
 	char filename[FILENAME_MAX];
+	char tmp[32];
 	gdImage *im;
 	FILE *f;
 	
-	if(!name) return(-1);
+	if(!name) return(-1);	
 	if(!strncmp(name, "-", 2) && config->background)
 	{
 		ERROR("stdout is unavailable in background mode.");
 		return(-1);
 	}
 	
-	fswc_strftime(filename, FILENAME_MAX, name,
+	fswc_strftime(tmp, FILENAME_MAX, "%Y%m%d%H%M%S",
 	              config->start, config->gmt);
+
+	memset(filename, 0, sizeof(filename));
+	strcat(filename, name);
+	strcat(filename, "_");
+	strcat(filename, tmp);
+	strcat(filename, ".jpg");
+	
 	
 	/* Create a temporary image buffer. */
 	im = fswc_gdImageDuplicate(image);
